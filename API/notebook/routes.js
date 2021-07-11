@@ -5,7 +5,7 @@ const {
   notebookUpdate,
   notebookCreate,
 } = require("./controllers");
-const router = express.Router();
+const router = express.Router(); // method from Express "Router"
 
 //Fetch (List) Route
 router.get("/", notebookFetch);

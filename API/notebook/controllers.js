@@ -1,9 +1,18 @@
-let notebooks = require("../../notebooks"); //Data
+//let notebooks = require("../../notebooks"); //Data
 const slugify = require("slugify");
+const { Notebook } = require("../../db/models");
 
 //Fetch
-exports.notebookFetch = (req, res) => {
-  res.json(notebooks);
+exports.notebookFetch = async (req, res) => {
+  try {
+    const notebooks = await Notebook.findAll({
+      attributes: { exclude: ["createdAt", "updatedAt"] },
+    });
+
+    res.json(notebooks);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 //Delete

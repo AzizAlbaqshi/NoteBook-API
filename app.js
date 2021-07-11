@@ -15,9 +15,11 @@ app.use(express.json()); //instead of bodyParser
 //Routes
 app.use("/notebooks", noteBookRoutes);
 
+app.use("/media", express.static("media")); // static method will save medias as a files
+
 const run = async () => {
   try {
-    await db.sequelize.sync();
+    await db.sequelize.sync(); //{force : true} use once each time to add new attributes
     console.log("Connection to the database successful!");
     await app.listen(8000, () => {
       console.log("The application is running on localhost:8000");

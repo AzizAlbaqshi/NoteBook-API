@@ -5,7 +5,19 @@ const {
   notebookUpdate,
   notebookCreate,
 } = require("./controllers");
+const multer = require("multer");
+
 const router = express.Router(); // method from Express "Router"
+
+//multer
+const storage = multer.diskStorage({
+  destination: "./media",
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
 
 //Fetch (List) Route
 router.get("/", notebookFetch);
@@ -14,9 +26,9 @@ router.get("/", notebookFetch);
 router.delete("/:notebookId", notebookDelete);
 
 //Update Route
-router.put("/:notebookId", notebookUpdate);
+router.put("/:notebookId", upload.single("image"), notebookUpdate);
 
 // Create Route
-router.post("/", notebookCreate);
+router.post("/", upload.single("image"), notebookCreate);
 
 module.exports = router;

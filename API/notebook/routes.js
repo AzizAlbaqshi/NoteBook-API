@@ -1,9 +1,11 @@
 const express = require("express");
 const {
   notebookFetch,
-  notebookDelete,
-  notebookUpdate,
-  notebookCreate,
+  deleteNotebook,
+  // notebookUpdate,
+  createNotebook,
+  createNote,
+  fetchNotebook,
 } = require("./controllers");
 const multer = require("multer");
 
@@ -19,16 +21,37 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+//Parameter
+router.param("notebookId", async (req, res, next, notebookId) => {
+  const notebook = await fetchNotebook(notebookId, next);
+  if (notebook) {
+    req.notebook = notebook;
+    next();
+  } else {
+    const error = new Error("notebook Not Found");
+    error.status = 404;
+    next(error);
+  }
+});
+
 //Fetch (List) Route
 router.get("/", notebookFetch);
 
 //Delete Route
-router.delete("/:notebookId", notebookDelete);
+router.delete("/:notebookId", deleteNotebook);
 
 //Update Route
-router.put("/:notebookId", upload.single("image"), notebookUpdate);
+//router.put("/:notebookId", upload.single("image"), notebookUpdate);
 
 // Create Route
-router.post("/", upload.single("image"), notebookCreate);
+router.post("/", upload.single("image"), createNotebook);
+
+//create poster
+router.post(
+  "/:notebookId/notes",
+  //passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  createNote
+);
 
 module.exports = router;
